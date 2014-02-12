@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+ 
+ 	<bean id="freemarkerConfig"
+	 class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+	<!-- set freemarker page path-->
+		<property name="templateLoaderPath"><value>/html/</value></property>
+		<property name="freemarkerSettings">
+			<props>
+			<!-- refresh time (s)-->
+				<prop key="template_update_delay">1</prop>  
+				<prop key="locale">zh_CN</prop>
+				<prop key="defaultEncoding">UTF-8</prop>
+			</props>
+		</property>
+	</bean>
+     
+ </beans>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+ 
+ 	<!-- 注解控制配置 @RequestMapping 会被处理 (HandlerMappings)-->
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+
+    <!-- 注解控制配置   (HandlerAdapters)-->
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+    
+    <!-- 注解控制配置 @Controller -->
+    <context:component-scan base-package="com.bigtail.**.controller"/> 
+     
+     
+    <!-- view config begin-->
+    
+    <!-- 根据客户端的不同的请求决定不同的view进行响应, 如 /blog /1.json /blog/1.xml  /blog/1234?format=json
+-->
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver" id="viewResolver">
+    
+    <!-- 忽略Accept Header 因为不同浏览器Accept Header是不一样的，导致服务器不知道传什么格式数据 -->
+    	<property name="ignoreAcceptHeader" value="true"></property>
+    	<!-- default type 为  text/html-->
+    	<property name="defaultContentType" value="text/html"/>
+    	<!-- 支持扩展名映射 -->
+    	<property name="mediaTypes">
+    		<map>
+    			<entry key="json" value="application/json"></entry>
+    			<entry key="xml" value="application/xml"></entry>
+    		</map>
+    	</property>
+    	<!-- 开启/**/**?format=json -->
+    	<property name="favorParameter" value="false"/>
+    	<property name="viewResolvers">
+    		<list>   			
+				<!-- freemarkerview config begin-->
+				<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+				<!-- 定义RequestContext的一个别名 为rc -->
+					<property name="requestContextAttribute" value="rc"/>
+					<property name="cache">
+						<value>true</value>
+					</property>
+					<property name="suffix">
+						<value>.html</value>
+					</property>
+					<!-- 暴露了处理表单和验证错误信息的宏操作 -->
+					<property name="exposeSpringMacroHelpers" value="true"/>
+					<property name="contentType">
+			           <value>text/html; charset=UTF-8</value> 
+			        </property>
+			        <!-- 是否将请求暴露给freemarker所用 -->
+			        <property name="exposeRequestAttributes"> 
+     					<value>true</value>
+    				</property> 
+				    <property name="exposeSessionAttributes">
+				      <value>false</value>
+					</property>			        
+				</bean>
+				<!-- freemarkerview config end-->
+    			<!-- 
+    			spring 会返回逻辑视图名字，同application Context中的beans的id进行匹配，来进行显示  
+    			for example:
+    			
+    			return new ModelAndView("pageList",new ModelMap());
+    			
+    			则会跳转至名为pageList页面中
+    			-->
+    			<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+    		
+    		</list>
+    	</property>
+    	
+    	<property name="defaultViews">
+    	
+    		<list>
+    			<!-- for josn -->
+    			<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+    			
+    			<!-- for xml -->
+    			<bean class="org.springframework.web.servlet.view.xml.MarshallingView" >
+					<property name="marshaller">
+						<bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
+					</property>
+				</bean>
+    		</list>
+    	
+    	</property>
+    	
+    </bean>
+     
+ </beans>
